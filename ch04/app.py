@@ -1,5 +1,6 @@
 # Core Pkgs
 import streamlit as st
+st.set_page_config(page_title="NLP Web App", page_icon="👍", layout="centered", initial_sidebar_state="auto")
 
 # NLP Pkgs
 from textblob import TextBlob
@@ -17,7 +18,22 @@ from wordcloud import WordCloud
 def main():
     """NLP Web App with Streamlit"""
 
-    st.title("NLP Web App")
+    # st.title("NLP Web App")
+    title_template = """
+        <div style="background-color:blue; padding:8px">
+            <h1 style="color:cyan">NLP Web App</h1>
+        </div>
+    """
+
+    st.markdown(title_template, unsafe_allow_html=True)
+
+    subheader_template = """
+        <div style="background-color:cyan; padding:8px">
+            <h3 style="color:blue">Powered by Streamlit</h1>
+        </div>
+    """
+
+    st.markdown(subheader_template, unsafe_allow_html=True)
 
     # sidebar menu
     activity = ["Text Analysis", "Translation", "Sentiment Analysis", "About"]

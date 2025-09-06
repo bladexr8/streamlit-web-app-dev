@@ -14,6 +14,31 @@ import matplotlib
 # matplotlib.use("Agg")
 from wordcloud import WordCloud
 
+from collections import Counter
+import re
+
+def summarize_text(text, num_sentences=3):
+    # Remove special characters and convert to lowercase
+    clean_text = re.sub('[^a-zA-Z]', ' ', text).lower()
+
+    # Split text into words
+    words = clean_text.split()
+
+    # Calculate the freuency of each word
+    word_freq = Counter(words)
+
+    # Sort the words based on their frequenct
+    # in descending order
+    sorted_words = sorted(word_freq, key=word_freq.get, reverse=True)
+
+    # Extract the top 'num_sentences' most frequent words
+    top_words = sorted_words[:num_sentences]
+
+    # Create the summary by joining the top words
+    summary = ' '.join(top_words)
+
+    return summary
+
 # main procedure
 def main():
     """NLP Web App with Streamlit"""
@@ -71,9 +96,24 @@ def main():
                         }
                         st.write(result_desc)
 
+                    with st.expander("Stopwords"):
+                        st.success("Stop Words List")
+                        stop_w = nt.TextExtractor(raw_text).extract_stopwords()
+                        st.error(stop_w)
+
                 with col2:
                     with st.expander("Processed Text"):
                         st.success("Stopwords Excluded Text")
+                        processed_text = str(nt.TextFrame(raw_text).remove_stopwords())
+                        st.write(processed_text)
+
+                    with st.expander("Plot Wordcloud"):
+                        st.success("Wordcloud")
+                        wordcloud = WordCloud().generate(processed_text)
+                        fig = plt.figure(1, figsize=(20,10))
+                        plt.imshow(wordcloud, interpolation = 'bilinear')
+                        plt.axis('off')
+                        st.pyplot(fig)
 
                 st.write("")
                 st.write("")
@@ -88,6 +128,8 @@ def main():
                 with col4:
                     with st.expander("Summarize"):
                         st.success("Summarize")
+                        summary = summarize_text(raw_text)
+                        st.success(summary)
 
     if choice == "Translation":
         st.subheader("Translation")

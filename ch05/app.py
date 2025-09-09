@@ -39,6 +39,17 @@ def summarize_text(text, num_sentences=3):
 
     return summary
 
+@st.cache_data
+# Lemma and Tokens Function
+def text_analyzer(text):
+    # Import English Library
+    nlp = spacy.load('en_core_web_sm')
+    # create an nlp project
+    doc = nlp(text)
+    # extract tokens and lemmas
+    allData = [('"Token" : {},\n"Lemma: {}'.format(token.text, token.lemma_)) for token in doc]
+    return allData
+
 # main procedure
 def main():
     """NLP Web App with Streamlit"""
@@ -124,6 +135,11 @@ def main():
                 with col3:
                     with st.expander("Tokens&Lemmas"):
                         st.write("T&K")
+                        processed_text_mid = str(nt.TextFrame(raw_text).remove_stopwords())
+                        processed_text_mid = str(nt.TextFrame(processed_text_mid).remove_puncts())
+                        processed_text_fin = str(nt.TextFrame(processed_text_mid).remove_special_characters())
+                        tandl = text_analyzer(processed_text_fin)
+                        st.json(tandl)
 
                 with col4:
                     with st.expander("Summarize"):

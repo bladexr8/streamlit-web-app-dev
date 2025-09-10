@@ -57,7 +57,42 @@ def main():
                   st.image(our_image, width=600, use_container_width=True)
             
         elif choice == 'Diagnosis':
-            pass
+            if st.sidebar.button("Diagnosis"):
+                new_img = np.array(our_image.convert('RGB')) #our image is converted into an array
+                new_img = cv2.cvtColor(new_img,1) #0 is original, 1 is grayscale
+                gray = cv2.cvtColor(new_img, cv2.COLOR_BGR2GRAY)
+                st.text("Chest X-Ray")
+                st.image(gray, width=400, use_container_width=True)
+
+                #X-Ray Imge Pre-processing
+                IMG_SIZE = (200, 200)
+                img = cv2.equalizeHist(gray)
+                img = cv2.resize(img, IMG_SIZE)
+                img = img/255 #normalization
+
+                # Image reshaping according to tensorflow format
+                X_Ray = img.reshape(1, 200, 200, 1)
+
+                #Pre-trained CNN Model loading
+                model = tf.keras.models.load_model("./models/Covid19_CNN_Classifier.h5")
+
+                #Diagnosis (Prediction== Binary Classification)
+                diagnosis_proba = model.predict(X_Ray)
+                diagnosis = np.argmax(diagnosis_proba,axis=1)
+
+                my_bar = st.sidebar.progress(0)
+
+                for percent_complete in range(100):
+                    time.sleep(0.05)
+                    my_bar.progress(percent_complete + 1)
+
+				#Diagnosis Cases: No-Covid=0, Covid=1
+                if diagnosis == 0:
+                    st.sidebar.success("DIAGNOSIS: NO COVID-19")
+                else:
+                    st.sidebar.error("DIAGNOSIS: COVID-19")
+
+                st.warning("CONVID doesn't exist! This Web App is just a DEMO about Streamlit and Artificial Intelligence and there is no clinical value in its diagnosis!")
 
         else:
             st.subheader("Disclaimer and Info")

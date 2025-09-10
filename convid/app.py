@@ -39,11 +39,30 @@ def main():
         if choice == 'Image Enhancement':
             st.subheader("Image Enhancement")
 
+            enhance_type = st.sidebar.radio("Enhancement Type", ["Original", "Contrast", "Brightness"])
+
+            if enhance_type == "Contrast":
+                  c_rate = st.slider("Contrast", 0.5, 5.0)
+                  enhancer = ImageEnhance.Contrast(our_image)
+                  img_output = enhancer.enhance(c_rate)
+                  st.image(img_output, width=600, use_container_width=True)
+
+            elif enhance_type == "Brightness":
+                  c_rate = st.slider("Brightness", 0.5, 5.0)
+                  enhancer = ImageEnhance.Brightness(our_image)
+                  img_output = enhancer.enhance(c_rate)
+                  st.image(img_output, width=600, use_container_width=True)
+            else:
+                  st.text("Original Image")
+                  st.image(our_image, width=600, use_container_width=True)
+            
         elif choice == 'Diagnosis':
             pass
 
         else:
             st.subheader("Disclaimer and Info")
+            st.write("This App is just a Demo. It does not provide any medical advice")
+            st.write("P.S. Convid doesn't exist")
 
     if st.sidebar.button("About the Author"):
         st.sidebar.subheader("Convid Detection Tool")
